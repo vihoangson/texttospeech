@@ -1,0 +1,19 @@
+{
+    "name": "admin/texttospeech",
+    "autoload": {
+        "psr-4": {
+            "Admin\\Texttospeech\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Vi Hoàng Sơn",
+            "email": "vihoangson@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "8.1.6",
+        "google/auth": "^1.26",
+        "vlucas/phpdotenv": "^5.5"
+    }
+}
