@@ -2,7 +2,7 @@
     "name": "sonlib/texttospeech",    
     "autoload": {
         "psr-4": {
-            "Abc": "src"
+            "Abc\\": "src"
         }
     }
 }
