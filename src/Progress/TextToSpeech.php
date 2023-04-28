@@ -1,22 +1,34 @@
 <?php
-namespace Sonlib\Progress ;
+
+namespace Sonlib\Progress;
+
 use Exception;
 
 /**
  *
+ * @property string $text
  */
-class TextToSpeech
-{
-    public function __construct($key){
-        $this->key = $key;
+class TextToSpeech {
 
+    private $key;
+    /**
+     * @var false|string
+     */
+    private $source;
+
+    public function __construct($key) {
+        $this->key = $key;
     }
 
+    public function setText(string $string) {
+        $this->text = $string;
+    }
 
-	public function convert($text){
-        if($this->key)
+    public function doConvert() {
+        if (!$this->key) {
             throw new Exception('Please insert key');
-
+        }
+        $text = $this->text;
         $curl = curl_init();
         $text = trim($text);
         if ($text === '') {
@@ -63,25 +75,37 @@ class TextToSpeech
 
         curl_close($curl);
 
-        if (isset($response)) {
+        if (empty(json_decode($response)->audioContent)) {
+            throw new Exception('Don\'t have response');
+        }
+        if (isset(json_decode($response)->audioContent)) {
             $f = base64_decode(json_decode($response)->audioContent);
-            header('Content-Type: audio/mpeg');
-            header('Content-Disposition: inline; filename="mp3_file.mp3"');
-            // header('Content-length: '. sizeof($f));
-            header('Cache-Control: no-cache');
-            header('Content-Transfer-Encoding: chunked');
-            $fileName = md5($text) . '.mp3';
-            if(file_exists($fileName)){
-                file_put_contents($fileName, $f);
-            }else{
+            $this->source = $f;
 
-            }
-
-
-            return $fileName;
 
         } else {
             header("HTTP/1.0 404 Not Found");
         }
-	}
+    }
+
+    public function saveFile(string $string = null) {
+
+        header('Content-Type: audio/mpeg');
+        header('Content-Disposition: inline; filename="mp3_file.mp3"');
+        // header('Content-length: '. sizeof($f));
+        header('Cache-Control: no-cache');
+        header('Content-Transfer-Encoding: chunked');
+        if($string === null){
+            $fileName = md5($this->text) . '.mp3';
+        }else{
+            $fileName = $string;
+        }
+        if (!file_exists($fileName)) {
+            file_put_contents($fileName, $this->source);
+        } else {
+
+        }
+
+        return $fileName;
+    }
 }
