@@ -1,13 +1,20 @@
 <?php
-namespace Abc\Progress ;
+namespace Sonlib\Progress ;
 /**
  *
  */
 class TextToSpeech
 {
+    public function __construct($key){
+        $this->key = $key;
+
+    }
+
 
 	public function convert($text){
-
+        if($this->key) 
+            throw new Exception('Please insert key');
+        
         $curl = curl_init();
         $text = trim($text);
         if ($text === '') {
@@ -18,7 +25,7 @@ class TextToSpeech
         // $lang = 'en';
         // $lang = 'ja';
 
-        $key = 'AIzaSyAa8yy0GdcGPHdtD083HiGGx_S0vMPScDM';
+        $key = $this->key;
 
         curl_setopt_array($curl, [
             CURLOPT_URL            => "https://content-texttospeech.googleapis.com/v1beta1/text:synthesize?alt=json&key=" . $key,
